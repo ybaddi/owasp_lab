@@ -26,6 +26,24 @@
 if(isset($_POST['log'])) {
     $username = $_POST['username'];
     $password = $_POST['password'];
-    echo $username. " with password : ". $password;
+    $md5password = md5($_POST['password']);
+
+    $con = mysqli_connect("localhost","root","baddiroot","test");
+    $query = "SELECT * FROM users WHERE name='$username' AND password='$md5password'";
+
+    $result=mysqli_query($con,$query);
+
+    if(mysqli_num_rows($result) !=0){
+        while($data = mysqli_fetch_assoc($result))   {
+
+            if($md5password == $data['password'] and $username == $data['name']){
+                echo "login succes";
+                setcookie("username",$data['name'],time() + 365);
+                setcookie("password",$data['password'],time() + 365);
+            }else{
+                echo "login failed";
+            }
+        }
     }
+}
 ?>
